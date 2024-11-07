@@ -2,11 +2,15 @@ services:
   postgres:
     image: "postgres:16.1"
     environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_USER=admin
-      - POSTGRES_DB=gerador_certificado
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gerador_certificado
     ports:
       - "5432:5432"
+    networks:
+      - diploma_network
+    volumes:
+      - ./postgres/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql  
 
   pgadmin:
     image: dpage/pgadmin4
@@ -18,3 +22,29 @@ services:
       - "5050:5050"
     depends_on:
       - postgres
+    networks:
+      - diploma_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - diploma_network
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+    ports:
+      - "3000:3000"
+    networks:
+      - diploma_network
+
+networks:
+    diploma_network:
+      driver: bridge
