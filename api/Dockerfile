@@ -2,6 +2,8 @@ FROM node:20.12.2
 
 COPY package*json ./
 
+WORKDIR /api
+
 RUN npm install
 
 COPY . .

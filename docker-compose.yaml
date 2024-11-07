@@ -45,6 +45,21 @@ services:
     networks:
       - diploma_network
 
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - postgres
+    volumes:
+      - certificado_storage:/app/worker/pdf_files
+    networks:
+      - diploma_network
+
 networks:
     diploma_network:
       driver: bridge
+
+volumes:
+  certificado_storage:

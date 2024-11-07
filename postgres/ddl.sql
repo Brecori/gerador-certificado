@@ -8,5 +8,8 @@ CREATE TABLE IF NOT EXISTS certificados (
     data_nascimento VARCHAR(255) NOT NULL,
     numero_rg VARCHAR(255) NOT NULL,
     data_emissao VARCHAR(255) NOT NULL,
+    carga_horaria VARCHAR(255) NOT NULL,
+    nome_assinatura VARCHAR(255) NOT NULL,
+    cargo VARCHAR(255) NOT NULL,
     diploma_url VARCHAR(255)
 );

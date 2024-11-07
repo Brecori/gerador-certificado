@@ -19,7 +19,7 @@ const sentToQueue = async (message) => {
     const connection = await amqp.connect("amqp://guest:guest@rabbitmq:5672");
     const channel = await connection.createChannel();
 
-    const queue = "teste";
+    const queue = "certificados";
 
     await channel.assertQueue(queue, { durable: true });
 
@@ -29,7 +29,6 @@ const sentToQueue = async (message) => {
 
     console.log("Mensagem enviada com sucesso", message);
 
-    // Fecha o canal e a conexão
     await channel.close();
     await connection.close();
   } catch (error) {
@@ -47,6 +46,9 @@ app.post("/certificados", async (req, res) => {
     data_nascimento,
     numero_rg,
     data_emissao,
+    carga_horaria,
+    nome_assinatura,
+    cargo,
     diploma_url,
   } = req.body;
 
@@ -55,7 +57,7 @@ app.post("/certificados", async (req, res) => {
   }
 
   const query =
-    "INSERT INTO certificados (nome_aluno, data_conclusao, nome_curso, nacionalidade, naturalidade, data_nascimento, numero_rg, data_emissao, diploma_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
+    "INSERT INTO certificados (nome_aluno, data_conclusao, nome_curso, nacionalidade, naturalidade, data_nascimento, numero_rg, data_emissao, carga_horaria, nome_assinatura, cargo, diploma_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)";
 
   try {
     await client.connect();
@@ -68,7 +70,10 @@ app.post("/certificados", async (req, res) => {
       data_nascimento,
       numero_rg,
       data_emissao,
-      diploma_url,
+      carga_horaria,
+      nome_assinatura,
+      cargo,
+      diploma_url
     ]);
 
     sentToQueue(req.body);
