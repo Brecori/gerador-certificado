@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>Diploma</title>
     <style>
         @media print {
             @page {
                 size: A4 landscape;
                 margin: 0; /* Remove margem padrão */
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
             body {
                 margin: 0;
@@ -21,10 +27,11 @@
         }
 
         body {
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #f4f4f4;
+            font-family: 'Roboto';
+            background-color: #f5f5f5;
             margin: 0;
             padding: 0;
+            display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -35,8 +42,13 @@
             max-width: 1000px; /* Garantir que não ultrapasse a largura máxima */
             margin: 0 auto;
             padding: 40px;
-            background-color: white;
             box-shadow: none;
+            border: 1px solid #121212;
+            color: #121212;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f8e8;
         }
 
         .header {
@@ -80,24 +92,27 @@
 </head>
 <body>
     <div class="diploma-container">
-        <div class="header">Universidade de Programação</div>
-        <div class="sub-header">Certificado de Conclusão</div>
-        <div class="content">
-            <p>
-                Certificamos que <strong id="nome_aluno">nome</strong>, <span id="nacionalidade">nacionalidade</span>, natural do Estado de  <span id="estado"></span>, nascido em <span id="data_nascimento"></span>, RG <span id="documento"></span>, concluiu em <span id="data_conclusao"></span> o curso de <span id="curso"></span>, nível de especialização, com carga horária de <span id="carga_horaria"></span> horas.
-            </p>
-            <p>
-                Este certificado é concedido em conformidade com o artigo 44, inciso 3353, da Lei 9394/96, e com a Resolução 
-                C.N.C./C.C.S. nº 01/07.
-            </p>
+        <div>
+
+            <div class="header">Universidade de Programação</div>
+            <div class="sub-header">Certificado de Conclusão</div>
+            <div class="content">
+                <p>
+                    Certificamos que <strong id="nome_aluno">nome</strong>, <span id="nacionalidade">nacionalidade</span>, natural do Estado de  <span id="estado">estado</span>, nascido em <span id="data_nascimento">data</span>, RG <span id="documento">999.999.999-99</span>, concluiu em <span id="data_conclusao">data</span> o curso de <span id="curso">teste</span>, nível de especialização, com carga horária de <span id="carga_horaria">X</span> horas.
+                </p>
+                <p>
+                    Este certificado é concedido em conformidade com o artigo 44, inciso 3353, da Lei 9394/96, e com a Resolução 
+                    C.N.C./C.C.S. nº 01/07.
+                </p>
+            </div>
+            <div class="date">São Paulo, <span id="data_emissao">data</span></div>
+            <div class="signatures">
+                <div class="signature">
+                    <p><strong id="nome_assinatura">José Romualdo</strong></p>
+                    <p id="cargo">Professor</p>
+                </div>            
+            </div>
         </div>
-        <div class="date">São Paulo, <span id="data_emissao"></span></div>
-        <div class="signatures">
-            <div class="signature">
-                <p><strong id="nome_assinatura"></strong></p>
-                <p id="cargo"></p>
-            </div>            
         </div>
-    </div>
-</body>
+    </body>
 </html>
