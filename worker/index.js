@@ -5,14 +5,15 @@ const pdfkit = require("pdfkit");
 const ejs = require("ejs");
 const pdf = require("html-pdf-node");
 const cheerio = require("cheerio");
+const { default: axios } = require("axios");
 
 const templatePath = path.join(__dirname, "template.html");
 
-const namePdfFormater = (name) => {
+const namePdfFormater = (name, curso) => {
   const words = name.split(" ");
   const firstName = words[0];
   const lastName = words[words.length - 1];
-  return `${firstName}_${lastName}.pdf`;
+  return `${firstName}_${lastName}_${curso}.pdf`;
 };
 
 const consumeMessage = async (channel, message) => {
@@ -22,7 +23,6 @@ const consumeMessage = async (channel, message) => {
 
   const $ = cheerio.load(htmlContent);
 
-  // Substitui o conteúdo usando os IDs dos elementos
   $("#nome_aluno").text(data.nome_aluno);
   $("#nacionalidade").text(data.nacionalidade);
   $("#estado").text(data.naturalidade);
@@ -35,28 +35,37 @@ const consumeMessage = async (channel, message) => {
   $("#nome_assinatura").text(data.nome_assinatura);
   $("#cargo").text(data.cargo);
 
-  // Salva o HTML modificado como string
   const modifiedHtmlContent = $.html();
 
-  // Diretório e nome do arquivo PDF
   const pdfDir = path.join(__dirname, "pdf_files");
   fs.ensureDirSync(pdfDir);
-  const pdfName = namePdfFormater(data.nome_aluno);
+  const pdfName = namePdfFormater(data.nome_aluno, data.nome_curso);
   const pdfPath = path.join(pdfDir, pdfName);
 
   try {
-    // Renderiza o conteúdo HTML usando EJS com await
     console.log("Conteúdo HTML renderizado com sucesso!");
 
-    // Gerando o PDF com o conteúdo HTML renderizado
     const options = { format: "A4", landscape: true };
     const pdfBuffer = await pdf.generatePdf(
       { content: modifiedHtmlContent },
       options
     );
 
-    // Salvando o PDF no diretório desejado
     fs.writeFileSync(pdfPath, pdfBuffer);
+
+    try {
+      await axios.put(`http://api:3000/certificado-path/${data.id}`, {
+        caminho_certificado: pdfPath,
+      });
+      console.log(
+        "Caminho do certificado atualizado com sucesso no banco de dados"
+      );
+    } catch (err) {
+      console.error(
+        "Erro ao atualizar o caminho do certificado no banco de dados:",
+        err
+      );
+    }
     console.log(
       `Certificado para ${data.nome_aluno} gerado com sucesso em ${pdfPath}!`
     );
@@ -64,7 +73,6 @@ const consumeMessage = async (channel, message) => {
     console.error("Erro ao processar o certificado:", err);
   }
 
-  // Confirma que a mensagem foi processada
   channel.ack(message);
 };
 
@@ -77,10 +85,8 @@ const workerInit = async () => {
       const connection = await amqp.connect("amqp://guest:guest@rabbitmq:5672");
       const channel = await connection.createChannel();
 
-      // Declara a fila
       await channel.assertQueue("certificados", { durable: true });
 
-      // Consome as mensagens da fila
       channel.consume("certificados", (message) => {
         consumeMessage(channel, message);
       });
@@ -92,7 +98,7 @@ const workerInit = async () => {
       console.error(
         `Erro de conexão com o RabbitMQ. Retentando em 5 segundos... (${retries}/${maxRetries})`
       );
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // Aguarda 5 segundos antes de tentar novamente
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   }
 };

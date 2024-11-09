@@ -11,5 +11,5 @@ CREATE TABLE IF NOT EXISTS certificados (
     carga_horaria VARCHAR(255) NOT NULL,
     nome_assinatura VARCHAR(255) NOT NULL,
     cargo VARCHAR(255) NOT NULL,
-    diploma_url VARCHAR(255)
+    caminho_certificado VARCHAR(255)
 );
