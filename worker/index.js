@@ -10,10 +10,9 @@ const { default: axios } = require("axios");
 const templatePath = path.join(__dirname, "template.html");
 
 const namePdfFormater = (name, curso) => {
-  const words = name.split(" ");
-  const firstName = words[0];
-  const lastName = words[words.length - 1];
-  return `${firstName}_${lastName}_${curso}.pdf`;
+  const newName = name.replaceAll(" ", "_");
+  const formattedCurso = curso.replaceAll(" ", "_");
+  return `${newName}_${formattedCurso}.pdf`;
 };
 
 const consumeMessage = async (channel, message) => {
@@ -37,10 +36,10 @@ const consumeMessage = async (channel, message) => {
 
   const modifiedHtmlContent = $.html();
 
-  const pdfDir = path.join(__dirname, "pdf_files");
+  const pdfDir = path.join("/app", "meus-certificados");
   fs.ensureDirSync(pdfDir);
   const pdfName = namePdfFormater(data.nome_aluno, data.nome_curso);
-  const pdfPath = path.join(pdfDir, pdfName);
+  let pdfPath = path.join(pdfDir, pdfName);
 
   try {
     console.log("Conteúdo HTML renderizado com sucesso!");
@@ -51,10 +50,19 @@ const consumeMessage = async (channel, message) => {
       options
     );
 
-    fs.writeFileSync(pdfPath, pdfBuffer);
+    try {
+      fs.writeFileSync(pdfPath, pdfBuffer);
+      console.log(`PDF salvo com sucesso em: ${pdfPath}`);
+      pdfPath = pdfPath.replace(
+        "/app/meus-certificados/",
+        "C:/meus-certificados/"
+      );
+    } catch (err) {
+      console.error("Erro ao salvar o PDF:", err);
+    }
 
     try {
-      await axios.put(`http://api:3000/certificado-path/${data.id}`, {
+      await axios.put(`http://api:3000/certificado-path/${data.nome_aluno}`, {
         caminho_certificado: pdfPath,
       });
       console.log(

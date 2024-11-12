@@ -58,7 +58,7 @@ services:
       - rabbitmq
       - postgres
     volumes:
-      - ./worker/pdf_files:/app/worker/pdf_files
+      - /c/meus-certificados:/app/meus-certificados
     networks:
       - diploma_network
 

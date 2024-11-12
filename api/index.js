@@ -15,20 +15,17 @@ const client = new Client({
 });
 
 const clientInit = async () => {
-  const maxRetries = 5;
   let retries = 0;
-
-  while (retries < maxRetries) {
+  await new Promise((res) => setTimeout(res, 10000));
+  while (retries < 5) {
     try {
       await client.connect();
-      console.log("Banco conectado.");
-      break;
+      console.log("Conectado ao PostgreSQL!");
+      return client;
     } catch (err) {
-      retries += 1;
-      console.error(
-        `Erro de conexão com o Banco de dados. Retentando em 5 segundos... (${retries}/${maxRetries})`
-      );
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      console.log(`Falha ao conectar. Tentativas restantes: ${retries}`);
+      retries++;
+      await new Promise((res) => setTimeout(res, 5000));
     }
   }
 };
@@ -124,6 +121,34 @@ app.put("/certificado-path/:nome_aluno", async (req, res) => {
   } catch (err) {
     console.log("Erro ao atualizar caminho_certificado", err);
     res.status(500).send("Erro interno no servidor");
+  }
+});
+
+app.get("/certificados/:id", async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).send("Nome do aluno não fornecido");
+  }
+
+  const query = "SELECT caminho_certificado FROM certificados WHERE id = $1";
+
+  try {
+    const result = await client.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .send(
+          "Certificado não encontrado para o aluno especificado ou aluno não existe"
+        );
+    }
+
+    const caminhoCertificado = result.rows[0].caminho_certificado;
+    res.status(200).json(caminhoCertificado);
+  } catch (err) {
+    console.error("Erro ao buscar certificado:", err);
+    res.status(500).send("Erro interno do servidor");
   }
 });
 
