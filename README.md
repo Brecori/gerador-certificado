@@ -1,5 +1,9 @@
 # Gerador de Certificados
 
+**Breno Tosi Barros - 93435 / Marina Lira Silva - 95503**
+
+## Descrição
+
 Este projeto permite a geração automática de certificados personalizados em formato PDF, com base em um template predefinido. A aplicação recebe dados de entrada via uma requisição POST, insere as informações no template do certificado e, em seguida, gera um PDF que é salvo em um diretório no sistema do usuário. Uma rota adicional permite ao usuário recuperar o caminho de acesso ao PDF gerado por meio de uma requisição GET. 
 
 ## Como rodar
