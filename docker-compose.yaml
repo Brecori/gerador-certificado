@@ -38,6 +38,13 @@ services:
     networks:
       - diploma_network
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - diploma_network
+
   api:
     build:
       context: ./api
